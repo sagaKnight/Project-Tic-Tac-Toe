@@ -13,18 +13,27 @@ function createPlayer(name) {
 }
 
 function createBoard(gameboard) {
-    console.log(gameboard);
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            const newDiv = document.createElement("div");
-            const boardSelector = document.querySelector("#board");
-            console.log(boardSelector);
-            boardSelector.appendChild(newDiv);
-        }
-    } 
+  console.log(gameboard);
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      const newDiv = document.createElement("div");
+      newDiv.setAttribute("col", j);
+      newDiv.setAttribute("row", i);
+      newDiv.addEventListener("click", () => clickedDiv(i, j));
+
+      const boardSelector = document.getElementById("board");
+
+      boardSelector.appendChild(newDiv);
+    }
+  }
 }
 
-function gameLogic() {
+function clickedDiv(row, col) {
+  const box = document.querySelector(`div[row="${row}"][col="${col}"]`);
+  console.log(row, col);
+}
+
+function winnerLogic() {
   return {
     didPlayerWin: function (count1, count2) {
       if (count1 === 3) {
@@ -80,9 +89,9 @@ function gameLogic() {
       let count2 = 0;
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-          if ((i + j) === 2 && gameboard[j][i] === "X") {
+          if (i + j === 2 && gameboard[j][i] === "X") {
             count1++;
-          } else if ((i + j) === 2 && gameboard[j][i] === "O") {
+          } else if (i + j === 2 && gameboard[j][i] === "O") {
             count2++;
           }
         }
@@ -95,13 +104,13 @@ function gameLogic() {
       this.checkPrimary(gameboard);
       this.checkSecondary(gameboard);
     },
-  }
+  };
 }
 
-const game = gameLogic();
+function gameLogic() {
+    //Finish gameLogic
+}
+
+const win = winnerLogic();
 createBoard(gameboard);
-game.activateChecks(gameboard);
-
-
-
-
+win.activateChecks(gameboard);
