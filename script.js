@@ -10,35 +10,35 @@ function createPlayer(playerName, tokenPicked) {
   const name = playerName;
   const token = tokenPicked;
   return {
-      getName: function() {
-        return name;
-      },
-      getToken: function() {
-        return token;
-      }
+    getName: function () {
+      return name;
+    },
+    getToken: function () {
+      return token;
+    },
   };
 }
 
 function turnSystem() {
-  let turn = "X"
+  let turn = "X";
   return {
-    getTurn: function() {
+    getTurn: function () {
       return turn;
-    }, 
-    changeTurn: function() {
-       turn = turn === "X" ? "O" : "X"
-    }
-  }
+    },
+    changeTurn: function () {
+      turn = turn === "X" ? "O" : "X";
+    },
+  };
 }
 
-function createBoard(gameboard) {
+function createBoard(gameboard, turnSystem) {
   console.log(gameboard);
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
       const newDiv = document.createElement("div");
       newDiv.setAttribute("col", j);
       newDiv.setAttribute("row", i);
-      newDiv.addEventListener("click", () => clickedDiv(i, j));
+      newDiv.addEventListener("click", () => clickedBox(i, j, turnSystem));
 
       const boardSelector = document.getElementById("board");
 
@@ -47,11 +47,19 @@ function createBoard(gameboard) {
   }
 }
 
-function clickedDiv(row, col) {
-  return new Promise(acc => {
-    const box = document.querySelector(`div[row="${row}"][col="${col}"]`);
-    console.log(box);
-  })
+function clickedBox(row, col, turnSystem) {
+  const box = document.querySelector(`div[row="${row}"][col="${col}"]`);
+  if (box.textContent === "") {
+    updateGameboard(row, col, turnSystem.getTurn());
+    box.textContent = turnSystem.getTurn();
+    turnSystem.changeTurn();
+    winnerLogic().activateChecks(gameboard);
+  }
+}
+
+function updateGameboard(row, col, token) {
+  gameboard[row][col] = token;
+  console.log(gameboard);
 }
 
 function winnerLogic() {
@@ -128,25 +136,15 @@ function winnerLogic() {
   };
 }
 
-async function gameLogic(player1, player2) {
-  let i = 0;
+function playGame(player1, player2) {
   const turnManager = turnSystem();
-  while (i < 9) {
-    await clickedDiv();
-    console.log(turnManager.getTurn());
-    turnManager.changeTurn();
-    i++
-  }
+  createBoard(gameboard, turnManager);
 }
 
 //const win = winnerLogic();
 //win.activateChecks(gameboard);
 
-createBoard(gameboard);
 const player1 = createPlayer("John", "X");
 const player2 = createPlayer("Smith", "O");
-gameLogic(player1, player2);
 
-
-
-
+playGame(player1, player2);
